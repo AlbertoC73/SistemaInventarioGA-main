@@ -1,0 +1,75 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@using ConsultorioDental.Utilidades
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userId = UserManager.GetUserId(User);
+}
+
+
+<div class="container">
+	<div class="row">
+		<div class="col-lg-6">
+			@if (User.IsInRole(DS.Role_Dentista))
+			{
+				<h2 class="text-primary">Lista de Usuarios</h2>
+			}
+			else
+			{
+				<h2 class="text-primary">Dentistas</h2>
+			}
+		</div>
+		@if (User.IsInRole(DS.Role_Dentista))
+		{
+			<div class="col-lg-6">
+				<a class="btn btn-outline-primary" asp-area="Identity"
+				   asp-page="/Account/Register">
+					<i class="bi bi-plus-square-fill m-1"></i>
+					Crear nuevo Usuario
+				</a>
+			</div>
+		}
+	</div>
+
+	<div class="p-4 border rounded bg-light">
+		<table id="tblDatos" class="table table-responsive table-hover">
+			<thead class="table-dark">
+				<tr>
+					<th>Email</th>
+					<th>Nombres</th>
+					<th>Apellidos</th>
+					<th>Telefono</th>
+					<th>Rol</th>
+					<th></th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</div>
+
+
+@if (User.IsInRole(DS.Role_Dentista))
+{
+    @section Scripts {
+    <script src="~/js/usuarioAdmin.js"></script>
+    }
+}
+
+@if (User.IsInRole(DS.Role_Paciente))
+{
+    @section Scripts {
+    <script>
+        var loggedInUserId = '@userId';
+        </script>
+        <script src="~/js/usuario.js"></script>
+    }
+
+    <style>
+        #paciente {
+            display: none;
+        }
+    </style>
+
+}

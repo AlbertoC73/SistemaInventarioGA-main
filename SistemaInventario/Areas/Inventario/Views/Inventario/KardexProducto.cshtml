@@ -1,0 +1,98 @@
+﻿@{
+    ViewData["Title"] = "KardexProducto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var titulo = "Kardex por Producto";
+}
+
+<form method="post">
+    <div style="padding-left:15%; padding-right:15%; padding-bottom:0.4rem;">
+        <div class="col-12 border-bottom p-0">
+            <h2 class="text-primary">@titulo</h2>
+        </div>
+        <div class="row mb-2">
+            <!--campo de fecha de inicio-->
+            <div class="form-group col-md-3" style="padding-top:14px;">
+                <label>Fecha de Inicio</label>
+                <input type="date" class="form-control" id="fechaInicioId" name="fechaInicioId">
+            </div>
+
+            <!--campo de fecha de final-->
+            <div class="form-group col-md-3" style="padding-top:14px;">
+                <label>Fecha Final</label>
+                <input type="date" class="form-control" id="fechaFinalId" name="fechaFinalId">
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <!--campo del select2-->
+            <div class="form-group col-md-3" style="padding-top:14px;">
+                <select class="form-select" id="productoId" name="productoId">
+                </select>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-block">
+            <button type="submit" class="btn btn-success" id="btnConsultar">
+                Consultar
+            </button>
+            <a asp-action="Index" class="btn btn-primary">
+                Regresar
+            </a>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        // Select2 para el campo de producto
+        $("#productoId").select2({
+            placeholder: "Seleccionar Producto",
+            allowClear: true,
+            theme: "bootstrap-5",
+            ajax: {
+                url: "/inventario/inventario/BuscarProducto",
+                contentType: "application/json; charset=utf-8",
+                data: function (params) {
+                    var query = {
+                        term: params.term
+                    };
+                    return query;
+                },
+                processResults: function (result) {
+                    return {
+                        results: $.map(result, function (item) {
+                            return {
+                                id: item.id,
+                                text: item.numeroSerie + ' ' + item.descripcion
+                            };
+                        })
+                    };
+                }
+            }
+        });
+
+        // Validación del formulario antes de enviarlo
+        $("#btnConsultar").click(function () {
+            let fechaInicio = document.getElementById("fechaInicioId").value;
+            let fechaFinal = document.getElementById("fechaFinalId").value;
+            let producto = document.getElementById("productoId").value;
+
+            if (fechaInicio === '') {
+                swal("E R R O R", "Ingrese la Fecha de Inicio", "error");
+                return false;
+            }
+
+            if (fechaFinal === '') {
+                swal("E R R O R", "Ingrese la Fecha Final", "error");
+                return false;
+            }
+
+            if (producto === '') {
+                swal("E R R O R", "Seleccione un Producto", "error");
+                return false;
+            }
+
+            // Si todas las validaciones pasan, el formulario se enviará
+        });
+    </script>
+}
